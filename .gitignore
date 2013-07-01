@@ -1,0 +1,6 @@
+.coverage
+.DS_Store
+/dist/
+/MANIFEST
+/cover/
+*.egg-info

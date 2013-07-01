@@ -1,0 +1,4 @@
+-r requirements-testing.txt
+
+distribute
+restview
