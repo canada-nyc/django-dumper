@@ -27,14 +27,6 @@ Then configure either the `per site` or `per view` cache.
 .. _per site: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-site-cache
 .. _per view: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-view-cache
 
-(Optionally) set ``DUMPER_CATCH_EXCPETIONS``. By default it is set to ``None``
-so that no excpetions are caught. This is used when trying to get the
-inalidated paths from the model and when trying to create a cache key from
-those paths. This allows you to ignore values like `None` returned by
-`get_absolute_url`. For example, to catch all exceptions;
-
-    DUMPER_CATCH_EXCPETIONS = Exception
-
 
 Usage
 -----
