@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core.cache import cache, get_cache
-from django.test.utils import override_settings
+
+from override_settings import override_settings
 
 from dumper import invalidation
 from .utils import clear_all_caches
