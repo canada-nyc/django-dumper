@@ -13,6 +13,7 @@ setup(
     long_description=open('README.rst').read(),
     install_requires=[
         "Django>=1.3,<1.6",
+        "six",
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

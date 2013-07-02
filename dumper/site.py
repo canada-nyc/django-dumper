@@ -1,3 +1,5 @@
+from six import string_types
+
 from django.db.models import signals
 
 from .invalidation import invalidate_paths
@@ -18,7 +20,7 @@ def register_instance_function_at_save(model, function):
 
 def get_paths_from_model(model):
     paths = model.dependent_paths()
-    if isinstance(paths, basestring):
+    if isinstance(paths, string_types):
         model_name = model.__class__.__name__
         raise TypeError(
             ('dependent_paths on {} should return a list of paths, not a'
