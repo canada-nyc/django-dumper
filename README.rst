@@ -73,7 +73,7 @@ Then make sure all the tests past (and write new ones for any new features)::
 
     pip install -e .
     pip install -r requirements-dev.txt
-    django-admin.py test --settings=dumper.test.settings dumper
+    django-admin.py test --settings=test.settings
 
 Check if the README.rst looks right::
 

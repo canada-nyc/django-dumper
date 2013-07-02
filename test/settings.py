@@ -4,7 +4,7 @@ from os import path
 
 
 SECRET_KEY = 'not secret'
-INSTALLED_APPS = ('dumper', 'dumper.test')
+INSTALLED_APPS = ('dumper', 'test')
 TEMPLATE_DEBUG = DEBUG = True
 DATABASES = {
     'default': {
@@ -12,7 +12,7 @@ DATABASES = {
         'NAME': 'imagekit.db',
     },
 }
-ROOT_URLCONF = 'dumper.test.urls'
+ROOT_URLCONF = 'test.urls'
 
 # Testing
 if django.VERSION[:2] < (1, 6):

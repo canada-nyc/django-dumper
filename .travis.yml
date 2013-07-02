@@ -7,7 +7,7 @@ python:
 install:
   - pip install -e . -r requirements-testing.txt $DJANGO_VERSION
 script:
-  - django-admin.py test --settings=dumper.test.settings dumper
+  - coverage run --source=dumper --branch $(which django-admin.py) test --settings=test.settings
 after_success:
   - coveralls
 env:
