@@ -18,7 +18,7 @@ def register_instance_function_at_save(model, function):
 
 def get_paths_from_model(model):
     paths = model.dependent_paths()
-    if isinstance(paths, unicode):
+    if isinstance(paths, basestring):
         model_name = model.__class__.__name__
         raise TypeError(
             ('dependent_paths on {} should return a list of paths, not a'
