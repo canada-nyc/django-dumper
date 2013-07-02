@@ -1,3 +1,6 @@
+Warning: Don't use yet. I am still ironing out the kinks of invalidating
+ManyToMany Models
+
 django-dumper
 ============================
 
