@@ -1,6 +1,3 @@
-Warning: Don't use yet. I am still ironing out the kinks of invalidating
-ManyToMany Models
-
 django-dumper
 ============================
 
@@ -9,10 +6,6 @@ django-dumper
 
 .. image:: https://travis-ci.org/saulshanabrook/django-dumper.png
     :target: https://travis-ci.org/saulshanabrook/django-dumper
-
-.. image:: https://coveralls.io/repos/saulshanabrook/django-dumper/badge.png?branch=master
-    :target: https://coveralls.io/r/saulshanabrook/django-dumper
-
 
 ``django-dumper`` allows view caching invalidation based on model saves.
 It won't actually cache anything, but only invalidate the django cache.
@@ -33,8 +26,9 @@ Then configure either the `per site` or `per view` cache.
 
 Usage
 -----
-To invalidate certain paths on a model save, register that model using
-``dumper.site.register``.
+To invalidate certain paths on a model save and delete, register that model
+using ``dumper.register``. It will invalidate every path returned by the
+``dependent_paths`` method.
 
 .. code-block:: python
 
@@ -43,7 +37,7 @@ To invalidate certain paths on a model save, register that model using
     import dumper
 
 
-    class SimpleModel(models.Model):
+    class IceCream(models.Model):
         slug = models.CharField(max_length=200)
 
         def get_absolute_url(self):
@@ -53,11 +47,46 @@ To invalidate certain paths on a model save, register that model using
             '''Returns a list of paths to invalidate when this model is updated'''
             return [self.get_absolute_url()]
 
+    dumper.register(IceCream)
 
-    dumper.register(SimpleModel)
+``dependent_paths`` can also returns the paths of related objects to invalidate
+them as well. For instance if each ``IceCream`` had some related ``Sizes``
+then if one of those sizes is modified, that should invalidate the ``IceCream``
+as well.
 
-When a registered model is saved, ``dumper`` invalidates the caches returned
-by the ``dependent_paths`` method of that model.
+
+.. code-block:: python
+
+    from django.db import models
+
+    import dumper
+
+
+    class IceCream(models.Model):
+        slug = models.CharField(max_length=200)
+        sizes = models.ManyToManyField(Size, related_name='ice_creams')
+
+        def get_absolute_url(self):
+            return '/' + self.slug
+
+        def dependent_paths(self):
+            '''Returns a list of paths to invalidate when this model is updated'''
+            return [self.get_absolute_url()]
+
+
+    class Size(models.Model):
+        slug = models.CharField(max_length=200)
+
+        def get_absolute_url(self):
+            return '/' + self.slug
+
+        def dependent_paths(self):
+            for ice_cream in self.ice_creams:
+                yield ice_cream.get_absolute_url()
+            yield self.get_absolute_url()
+
+    dumper.register(IceCream)
+    dumper.register(Size)
 
 Contributing
 ------------

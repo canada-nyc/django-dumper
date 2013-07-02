@@ -6,29 +6,31 @@ from .invalidation import invalidate_paths
 
 
 def register(model):
-    register_instance_function_at_save(model, invalidate_model_paths)
+    def invalidate_instance(sender, instance, **kwargs):
+        invalidate_instance_paths(instance)
+
+    signals.post_save.connect(invalidate_instance, model, weak=False)
+    signals.pre_delete.connect(invalidate_instance, model, weak=False)
+    for through in get_manytomany_through_from_model(model):
+        signals.m2m_changed.connect(invalidate_instance, through, weak=False)
 
 
-def register_instance_function_at_save(model, function):
-
-    def save_function(sender, instance, **kwargs):
-        function(instance)
-
-    signals.post_save.connect(save_function, model, weak=False)
-    signals.pre_delete.connect(save_function, model, weak=False)
+def get_manytomany_through_from_model(model):
+    for field in model._meta.many_to_many:
+        yield field.rel.through
 
 
-def get_paths_from_model(model):
-    paths = model.dependent_paths()
+def invalidate_instance_paths(instance):
+    paths = get_paths_from_model(instance)
+    invalidate_paths(paths)
+
+
+def get_paths_from_model(instance):
+    paths = instance.dependent_paths()
     if isinstance(paths, string_types):
-        model_name = model.__class__.__name__
+        model_name = instance.__class__.__name__
         raise TypeError(
             ('dependent_paths on {model_name} should return a list of paths, '
              ' not a string'.format(model_name=model_name))
         )
     return paths
-
-
-def invalidate_model_paths(model):
-    paths = get_paths_from_model(model)
-    invalidate_paths(paths)

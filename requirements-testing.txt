@@ -1,3 +1,1 @@
 django-discover-runner==1.0
-coveralls==0.2
-django-override-settings==1.2

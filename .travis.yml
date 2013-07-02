@@ -7,9 +7,7 @@ python:
 install:
   - pip install -e . -r requirements-testing.txt $DJANGO_VERSION
 script:
-  - coverage run $(which django-admin.py) test --settings=test.settings
-after_success:
-  - coveralls
+  - django-admin.py test --settings=test.settings
 env:
   matrix:
     - DJANGO_VERSION="https://www.djangoproject.com/download/1.6a1/tarball/"
