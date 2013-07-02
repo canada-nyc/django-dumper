@@ -23,8 +23,8 @@ def get_paths_from_model(model):
     if isinstance(paths, string_types):
         model_name = model.__class__.__name__
         raise TypeError(
-            ('dependent_paths on {} should return a list of paths, not a'
-             'string'.format(model_name))
+            ('dependent_paths on {model_name} should return a list of paths, '
+             ' not a string'.format(model_name=model_name))
         )
     return paths
 
