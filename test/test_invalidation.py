@@ -1,7 +1,10 @@
 from django.test import TestCase
 from django.core.cache import cache, get_cache
 
-from override_settings import override_settings
+try:
+    from django.test.utils import override_settings
+except ImportError:
+    from override_settings import override_settings
 
 from dumper import invalidation
 from .utils import clear_all_caches
