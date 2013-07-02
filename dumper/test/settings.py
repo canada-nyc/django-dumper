@@ -1,3 +1,5 @@
+import django
+
 from os import path
 
 
@@ -13,8 +15,9 @@ DATABASES = {
 ROOT_URLCONF = 'dumper.test.urls'
 
 # Testing
-INSTALLED_APPS += ('discover_runner',)
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
+if django.VERSION[:2] < (1, 6):
+    INSTALLED_APPS += ('discover_runner',)
+    TEST_RUNNER = 'discover_runner.DiscoverRunner'
 TEST_DISCOVER_TOP_LEVEL = path.dirname(path.dirname(__file__))
 
 # Cache
