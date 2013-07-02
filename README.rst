@@ -67,21 +67,15 @@ the `issues section` and report it. Go ahead, do it!
 To contribute code in any form, fork the repository and clone it locally.
 Create a new branch for your feature::
 
-.. code-block:: bash
-
     git commit -b feature/whatever-you-like
 
 Then make sure all the tests past (and write new ones for any new features)::
-
-.. code-block:: bash
 
     pip install -e .
     pip install -r requirements-dev.txt
     django-admin.py test --settings=dumper.test.settings dumper
 
 Check if the README.rst looks right::
-
-.. code-block:: bash
 
     restview -e 'python setup.py --long-description'
 
