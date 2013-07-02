@@ -9,6 +9,9 @@ django-dumper
 
 ``django-dumper`` allows view caching invalidation based on model saves.
 It won't actually cache anything, but only invalidate the django cache.
+It is useful if your views are only dependent on model data. For instance,
+a detail view will always return the same response, until the model changes.
+So this response for thie view can be cached until the model is changed.
 
 
 Installation
@@ -18,11 +21,33 @@ Installation is as easy as::
 
     pip install django-dumper
 
-Then configure either the `per site` or `per view` cache.
+Setup
+-----
+Configure either the `per site` or `per view` cache.
 
 .. _per site: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-site-cache
 .. _per view: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-view-cache
 
+You can set ``CACHE_MIDDLEWARE_SECONDS`` to a very long time, because each
+of your URLs will be invalidated when the models change. However, currently
+Django does not let you differentiate between backend and frontend caching.
+For instance, if you set it to cache for a year, then the browser would also
+be instructed to cache that page for a year, so even when the backend cache
+is invalidated the cached browser version will remain outdated. I currently
+don't have a solution for this, besides modifying the headers on each view
+indivually. `This thread` on stackoverflow covers the problem.
+
+.. _This thread: http://stackoverflow.com/questions/8448722/can-i-stop-djangos-site-wide-caching-middleware-from-setting-cache-control-and
+
+I also would reccomend enabling ```USE_ETAGS```. That way the whole response
+won't have to be sent to the user, only the header, if the ETAG is the same.
+
+.. _USE_ETAGS: https://docs.djangoproject.com/en/dev/ref/settings/#use-etags
+
+The Django documention does not cohesively describe how your middleware
+should be ordered, however `this stackoverflow` discussion does a fine job.
+
+.. _this stackoverflow: http://stackoverflow.com/questions/4632323/practical-rules-for-django-middleware-ordering#question
 
 Usage
 -----
