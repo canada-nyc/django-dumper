@@ -1,4 +1,3 @@
-from mock import Mock
 
 from django.test import TestCase
 
@@ -9,7 +8,7 @@ class TestGetPathsFromModel(TestCase):
 
     def model_from_dependent_paths(self, paths):
         model = lambda: None
-        model.dependent_paths = Mock(return_value=paths)
+        model.dependent_paths = lambda: paths
         return model
 
     def test_list_paths(self):
