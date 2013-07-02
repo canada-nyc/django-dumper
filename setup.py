@@ -12,7 +12,7 @@ setup(
     description='Django URL cache invalidation from model saves',
     long_description=open('README.rst').read(),
     install_requires=[
-        "Django>=1.3,<1.7",
+        "Django>=1.4,<1.7",
         "six",
     ],
     classifiers=[
