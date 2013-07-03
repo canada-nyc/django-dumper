@@ -1,6 +1,7 @@
 from django.http import HttpRequest
 from django.utils.cache import get_cache_key
-from django.middleware.cache import CacheMiddleware
+from django.core.cache import get_cache
+from django.conf import settings
 
 
 def invalidate_paths(paths):
@@ -9,17 +10,17 @@ def invalidate_paths(paths):
     cache that get page at.
     '''
     cache_keys = map(key_from_path, paths)
-    get_cache().delete_many(cache_keys)
+    get_proper_cache().delete_many(cache_keys)
 
 
-def get_cache():
+def get_proper_cache():
     '''Returns the cache that is used for URL caching'''
-    return CacheMiddleware().cache
+    return get_cache(settings.CACHE_MIDDLEWARE_ALIAS)
 
 
 def get_key_prefix():
     '''Returns the proper prefix for the URL caching keys'''
-    return CacheMiddleware().key_prefix
+    return settings.CACHE_MIDDLEWARE_KEY_PREFIX
 
 
 def get_request_from_path(path):
@@ -38,5 +39,5 @@ def key_from_path(path):
     return get_cache_key(
         request,
         key_prefix=get_key_prefix(),
-        cache=get_cache()
+        cache=get_proper_cache()
     )

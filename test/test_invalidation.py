@@ -49,14 +49,14 @@ class GetKeyPrefixTest(TestCase):
 class GetKeyCacheTest(TestCase):
     def test_default_cache(self):
         self.assertEqual(
-            invalidation.get_cache()._lock,
+            invalidation.get_proper_cache()._lock,
             get_cache('default')._lock
         )
 
     @override_settings(CACHE_MIDDLEWARE_ALIAS='other')
     def test_other_cache(self):
         self.assertEqual(
-            invalidation.get_cache()._lock,
+            invalidation.get_proper_cache()._lock,
             get_cache('other')._lock
         )
 
