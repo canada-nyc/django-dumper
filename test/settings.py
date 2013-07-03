@@ -4,7 +4,7 @@ from os import path
 
 
 SECRET_KEY = 'not secret'
-INSTALLED_APPS = ('dumper', 'test')
+INSTALLED_APPS = ('dumper', 'test', 'django.contrib.contenttypes')
 TEMPLATE_DEBUG = DEBUG = True
 DATABASES = {
     'default': {

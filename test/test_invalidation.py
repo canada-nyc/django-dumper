@@ -4,7 +4,7 @@ from django.core.cache import cache, get_cache
 from django.test.utils import override_settings
 
 from dumper import invalidation
-from .utils import clear_all_caches
+from . import utils
 
 
 class InalidatePathsTest(TestCase):
@@ -21,7 +21,7 @@ class InalidatePathsTest(TestCase):
         invalidation.invalidate_paths(paths)
 
     def tearDown(self):
-        clear_all_caches()
+        utils.clear_all_caches()
 
 
 class RequestFromPathTest(TestCase):
@@ -67,3 +67,6 @@ class KeyFromPathTest(TestCase):
         request = invalidation.get_request_from_path(path)
         key = invalidation.get_cache_key(request)
         self.assertEqual(invalidation.key_from_path(path), key)
+
+    def tearDown(self):
+        utils.clear_all_caches()

@@ -17,7 +17,11 @@ def register(model):
 
 def get_manytomany_through_from_model(model):
     for field in model._meta.many_to_many:
-        yield field.rel.through
+        through = field.rel.through
+        # `GenericRelation`s do not hvae a through and so should not be
+        # connected to as signals
+        if through:
+            yield through
 
 
 def invalidate_instance_paths(instance):

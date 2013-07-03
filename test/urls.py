@@ -3,19 +3,24 @@ try:
 except ImportError:
     from django.conf.urls.defaults import patterns, url
 
-from .views import simple_detail, related_detail
+from . import views
 
 
 urlpatterns = patterns(
     '',
     url(
         r'^simple/(?P<slug>[-\w]+)/$',
-        simple_detail,
+        views.simple_detail,
         name='simple-detail'
     ),
     url(
         r'^related/(?P<slug>[-\w]+)/$',
-        related_detail,
+        views.related_detail,
         name='related-detail'
+    ),
+    url(
+        r'^related-to-generic/(?P<slug>[-\w]+)/$',
+        views.related_to_generic_detail,
+        name='related-to-generic-detail'
     )
 )

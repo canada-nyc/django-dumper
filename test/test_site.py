@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from dumper import site
 
-from .models import SimpleModel, RelatedModel
+from . import models
 
 
 class TestGetPathsFromModel(TestCase):
@@ -27,10 +27,19 @@ class TestGetPathsFromModel(TestCase):
 class TestGetManyToManyThroughFromModel(TestCase):
     def test_none_from_simple_model(self):
         self.assertFalse(
-            list(site.get_manytomany_through_from_model(SimpleModel))
+            list(site.get_manytomany_through_from_model(models.SimpleModel))
         )
 
     def test_one_from_related_model(self):
-        throughs = list(site.get_manytomany_through_from_model(RelatedModel))
+        throughs = list(site.get_manytomany_through_from_model(
+            models.RelatedModel
+        ))
         self.assertEqual(len(throughs), 1)
-        self.assertIn(RelatedModel.related.through, throughs)
+        self.assertIn(models.RelatedModel.related.through, throughs)
+
+    def test_none_from_generic_relation(self):
+        self.assertFalse(
+            list(site.get_manytomany_through_from_model(
+                models.RelatedToGenericModel
+            ))
+        )
