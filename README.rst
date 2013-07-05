@@ -16,10 +16,10 @@ So this response for thie view can be cached until the model is changed.
 
 Installation
 ------------
-
 Installation is as easy as::
 
     pip install django-dumper
+
 
 Setup
 -----
@@ -28,26 +28,21 @@ Configure either the `per site` or `per view` cache.
 .. _per site: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-site-cache
 .. _per view: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-view-cache
 
-You can set ``CACHE_MIDDLEWARE_SECONDS`` to a very long time, because each
-of your URLs will be invalidated when the models change. However, currently
-Django does not let you differentiate between backend and frontend caching.
-For instance, if you set it to cache for a year, then the browser would also
-be instructed to cache that page for a year, so even when the backend cache
-is invalidated the cached browser version will remain outdated. I currently
-don't have a solution for this, besides modifying the headers on each view
-indivually. `This thread` on stackoverflow covers the problem.
+Then add ``dumper.middleware.InvalidateCacheMiddleware`` to your
+``MIDDLEWARE_CLASSES``. It must be before
+``django.middleware.cache.FetchFromCacheMiddleware`` so that it will invalidate
+the cached request before it tries to fetch it and return it. I would reccomend
+placing it directly before. For example:
 
-.. _This thread: http://stackoverflow.com/questions/8448722/can-i-stop-djangos-site-wide-caching-middleware-from-setting-cache-control-and
+.. code-block:: python
 
-I also would reccomend enabling ```USE_ETAGS```. That way the whole response
-won't have to be sent to the user, only the header, if the ETAG is the same.
+    MIDDLEWARE_CLASSES = (
+        'django.middleware.cache.UpdateCacheMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'dumper.middleware.InvalidateCacheMiddleware',
+        'django.middleware.cache.FetchFromCacheMiddleware',
+    )
 
-.. _USE_ETAGS: https://docs.djangoproject.com/en/dev/ref/settings/#use-etags
-
-The Django documention does not cohesively describe how your middleware
-should be ordered, however `this stackoverflow` discussion does a fine job.
-
-.. _this stackoverflow: http://stackoverflow.com/questions/4632323/practical-rules-for-django-middleware-ordering#question
 
 Usage
 -----
@@ -112,6 +107,82 @@ as well.
 
     dumper.register(IceCream)
     dumper.register(Size)
+
+
+Advice
+------
+You can set ``CACHE_MIDDLEWARE_SECONDS`` to a very long time, because each
+of your URLs will be invalidated when the models change. However, currently
+Django does not let you differentiate between backend and frontend caching.
+For instance, if you set it to cache for a year, then the browser would also
+be instructed to cache that page for a year, so even when the backend cache
+is invalidated the cached browser version will remain outdated. I currently
+don't have a solution for this, besides modifying the headers on each view
+indivually. `This thread` on stackoverflow covers the problem.
+
+.. _This thread: http://stackoverflow.com/questions/8448722/can-i-stop-djangos-site-wide-caching-middleware-from-setting-cache-control-and
+
+I also would reccomend enabling ```USE_ETAGS```. That way the whole response
+won't have to be sent to the user, only the header, if the ETAG is the same.
+
+.. _USE_ETAGS: https://docs.djangoproject.com/en/dev/ref/settings/#use-etags
+
+The Django documention does not cohesively describe how your middleware
+should be ordered, however `this stackoverflow` discussion does a fine job.
+
+.. _this stackoverflow: http://stackoverflow.com/questions/4632323/practical-rules-for-django-middleware-ordering#question
+
+
+Internals
+---------
+So you wanna know how this all works huh? Well it might seem pretty simple.
+This library really has two parts. The first hooks into model saves and calls
+and invalidation function on all the paths returned by ``dependent_paths``.
+The second actually invalidates those paths.
+
+### Model Registration
+When you register a model, it adds connects a function that retrieves the paths
+from the model and invalidates those paths to three signals. The first two
+are ``post_save`` and ``pre_delete``, which make sense. The third is
+``m2m_changed``. This signal is called actually by a ``through`` attribute of
+a ``ManyToManyField`` and is called whenever any member of that relationship is
+added added, deleted, or changed. It hooks this signal unto all the
+``ManyToManyField``s on the registered model. It most likely calls the
+invalidation function more than once if a many to many relationship is changed,
+but I figured there is minimal harm in over invalidating the paths, besides
+a slight performance hit from hitting the cache backend. However I figured
+this was worth it to maintain code simplicity.
+
+### Path Cache Invalidation
+You would think that invalidating a cache of a certain path shouldn't be too
+hard, just look at how the middleware caches the response, get the same key
+and then delete the cache entry for it. However the cache middleware varies
+the cache based on a few different request headers, such as cookies attached
+and language provided. This makes sense if you want your page responses to vary
+at the same path. However it makes invalidation a pain. `Certain` `techniques`
+`used` `to` `invalidate` these paths simply create a mock request with the path
+set to the path you want to invalidate, and gets the key using that request.
+I originally attempted to implement it this way, but I quickly found that
+it was difficult to test, because the test requests were different than the
+actuall browser requests and so presented difficult to find bugs in
+invalidation, where the cache might be invalidated for a path when accessing
+the path in the tests, but when accessing it on the browser it wasn't
+invalidated. Also it completely ignored different language caches, so if you
+varied your responses at all based on language or any other header, then it
+wouldn't invalidate your cache.
+
+So instead I created a middleware that invalidates the cache key, based on
+if it's path has already been invalidated since the last invalidation. When
+a path is invalidated, a key is set based on the path you want to invalidate.
+The value of that key is a list of requests that already have been invalidated.
+When the cache middleware gets a request, it creates a unique key based on
+the headers that might vary the cache. This key is added to the list when
+it is invalidated. So when the dumper cache invalidation middleware hits a page
+it checks to see if the that page header key, generated by the cache midleware,
+already exist inside the list of the cache key generated by the path.
+For more details, read through `the source`.
+
+.. _the source: https://github.com/saulshanabrook/django-dumper/blob/dumper/invalidation.py
 
 Contributing
 ------------
