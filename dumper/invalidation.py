@@ -18,6 +18,8 @@ def invalidate_paths(paths):
 
 def get_invalidation_key(path):
     path = path.split('#')[0]
+    if settings.APPEND_SLASH and not path.endswith('/'):
+        path += '/'
     key_prefix = settings.CACHE_MIDDLEWARE_KEY_PREFIX
     path = hashlib.md5(force_bytes(iri_to_uri(path)))
     cache_key = 'dumper.invalidation.invalidate_paths.{}.{}'.format(
