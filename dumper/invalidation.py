@@ -16,7 +16,7 @@ def invalidate_paths(paths):
     cache.set_many(items)
 
 
-def get_invalidation_key(path):
+def get_path_key(path):
     path = path.split('#')[0]
     if settings.APPEND_SLASH and not path.endswith('/'):
         path += '/'
