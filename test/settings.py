@@ -32,10 +32,9 @@ CACHES = {
     },
 }
 MIDDLEWARE_CLASSES = (
-    'django.middleware.cache.UpdateCacheMiddleware',
+    'dumper.middleware.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'dumper.middleware.InvalidateCacheMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
+    'dumper.middleware.FetchFromCacheMiddleware',
 )
 CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24 * 365  # one year

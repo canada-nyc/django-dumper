@@ -10,10 +10,9 @@ def invalidate_paths(paths):
     invalidate that keys for certain paths that the cache middleware would
     cache that get page at.
     '''
-    keys = map(get_invalidation_key, paths)
-    items = {key: [] for key in keys}
+    keys = map(get_path_key, paths)
     cache = get_cache(settings.CACHE_MIDDLEWARE_ALIAS)
-    cache.set_many(items)
+    cache.delete_many(keys)
 
 
 def get_path_key(path):
