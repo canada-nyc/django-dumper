@@ -21,7 +21,7 @@ def get_path_key(path):
         path += '/'
     key_prefix = settings.CACHE_MIDDLEWARE_KEY_PREFIX
     path = hashlib.md5(force_bytes(iri_to_uri(path)))
-    cache_key = 'dumper.invalidation.invalidate_paths.{}.{}'.format(
+    cache_key = 'dumper.invalidation.invalidate_paths.{0}.{1}'.format(
         key_prefix, path.hexdigest()
     )
     return cache_key
