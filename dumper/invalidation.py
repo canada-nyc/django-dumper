@@ -1,5 +1,4 @@
 import hashlib
-from django.utils.encoding import iri_to_uri, force_bytes
 
 from django.core.cache import get_cache
 from django.conf import settings
@@ -20,7 +19,7 @@ def get_path_key(path):
     if settings.APPEND_SLASH and not path.endswith('/'):
         path += '/'
     key_prefix = settings.CACHE_MIDDLEWARE_KEY_PREFIX
-    path = hashlib.md5(force_bytes(iri_to_uri(path)))
+    path = hashlib.md5(path)
     cache_key = 'dumper.invalidation.invalidate_paths.{0}.{1}'.format(
         key_prefix, path.hexdigest()
     )
