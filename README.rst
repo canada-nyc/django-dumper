@@ -118,11 +118,11 @@ of your URLs will be invalidated when the models change. However, currently
 Django does not let you differentiate between backend and frontend caching.
 For instance, if you set it to cache for a year, then the browser would also
 be instructed to cache that page for a year, so even when the backend cache
-is invalidated the cached browser version will remain outdated. I currently
-don't have a solution for this, besides modifying the headers on each view
-indivually. `This thread`_ on stackoverflow covers the problem.
+is invalidated the cached browser version will remain outdated. I would
+reccomend using `django-response-timeout`_ to set the client side cache
+time to a shorter length.
 
-.. _This thread: http://stackoverflow.com/questions/8448722/can-i-stop-djangos-site-wide-caching-middleware-from-setting-cache-control-and
+.. _django-response-timeout: http://github.com/saulshanabrook/django-response-timeout/
 
 I also would reccomend enabling `ETags`_. That way the whole response
 won't have to be sent to the user, only the header, if the ETAG is the same.
