@@ -10,7 +10,7 @@ class GetPathKeyTest(TestCase):
         keys = map(invalidation.get_path_key, paths)
         self.assertNotEqual(*keys)
 
-    def test_pound_sign_same(self):
+    def test_fragement_removed(self):
         paths = ['/path', '/path#dsfs']
         keys = map(invalidation.get_path_key, paths)
         self.assertEqual(*keys)
