@@ -69,6 +69,21 @@ class UpdateCacheMiddleware(cache.UpdateCacheMiddleware):
     cacheable and adds the cache key to the regenerated caches.
 
     Must be used in place of UpdateCacheMiddleware.
+    If the cache was a dictionary, a simplified version would look like this
+    {
+        # django caching
+        'cache_header./path.language=english': ['User-Agent',]
+        'cache_key./path.language=english.User-Agent=roboto': Response(content='<html>')
+
+        # dumper caching
+        'dumper_path./path': {
+            'cache_header./path.language=english': ['cache_key./path.language=english.User-Agent=roboto']
+        }
+    }
+
+    This would mean that the request at the path `/path` with the `User-Agent`
+    `roboto` and the langauge `english` was already invalidated, and so can
+    be returned as a cached item.
     """
     def process_response(self, request, response):
 
@@ -77,6 +92,8 @@ class UpdateCacheMiddleware(cache.UpdateCacheMiddleware):
             request,
             response
         )
+        # there are the checks that UpdateCacheMiddleware uses.
+        # if it wont cache the page, then no reason to add it to invalidated
         if (
             self._should_update_cache(request, response) and
             not getattr(response, 'streaming', False) and  # getattr for 1.4 support
@@ -84,11 +101,10 @@ class UpdateCacheMiddleware(cache.UpdateCacheMiddleware):
             cache.get_max_age(response)
         ):
             header_key = _generate_cache_header_key(self.key_prefix, request)
-            header_list = self.cache.get(header_key)
             cache_key = _generate_cache_key(
                 request,
                 request.method,
-                header_list,
+                self.cache.get(header_key),
                 self.key_prefix
             )
             path_key = get_path_key(request.path)
