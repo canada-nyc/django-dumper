@@ -79,7 +79,7 @@ class UpdateCacheMiddleware(cache.UpdateCacheMiddleware):
         )
         if (
             self._should_update_cache(request, response) and
-            not response.streaming and
+            not getattr(response, 'streaming', False) and  # getattr for 1.4 support
             response.status_code == 200 and
             cache.get_max_age(response)
         ):
