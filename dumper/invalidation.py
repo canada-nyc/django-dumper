@@ -1,6 +1,8 @@
 import hashlib
-import urlparse
-
+try:
+    from urllib.parse import urlsplit
+except ImportError:
+    from urlparse import urlsplit
 from django.core.cache import get_cache
 from django.conf import settings
 from django.utils.encoding import smart_text
@@ -17,7 +19,7 @@ def invalidate_paths(paths):
 
 
 def get_path_key(path):
-    path = urlparse.urlparse(path)[2]
+    path = urlsplit(path)[2]
     if settings.APPEND_SLASH and not path.endswith('/'):
         path += '/'
     key_prefix = settings.CACHE_MIDDLEWARE_KEY_PREFIX
