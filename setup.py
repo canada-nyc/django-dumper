@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-dumper',
-    version='0.0.0',
+    version='0.1.0',
     author='Saul Shanabrook',
     author_email='s.shanabrook@gmail.com',
     packages=find_packages(),
@@ -16,7 +16,7 @@ setup(
         "six",
     ],
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Framework :: Django",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
