@@ -4,6 +4,9 @@ django-dumper
 .. image:: https://pypip.in/v/django-dumper/badge.png
         :target: https://crate.io/packages/django-dumper
 
+.. image:: https://pypip.in/d/django-dumper/badge.png
+        :target: https://crate.io/packages/django-dumper
+
 .. image:: https://travis-ci.org/saulshanabrook/django-dumper.png
     :target: https://travis-ci.org/saulshanabrook/django-dumper
 
