@@ -104,7 +104,7 @@ class UpdateCacheMiddleware(cache.UpdateCacheMiddleware):
             cache_key = _generate_cache_key(
                 request,
                 request.method,
-                self.cache.get(header_key),
+                self.cache.get(header_key, []),
                 self.key_prefix
             )
             path_key = get_path_key(request.path)
