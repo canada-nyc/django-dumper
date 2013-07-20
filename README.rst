@@ -4,6 +4,9 @@ django-dumper
 .. image:: https://pypip.in/v/django-dumper/badge.png
         :target: https://crate.io/packages/django-dumper
 
+.. image:: https://pypip.in/d/django-dumper/badge.png
+        :target: https://crate.io/packages/django-dumper
+
 .. image:: https://travis-ci.org/saulshanabrook/django-dumper.png
     :target: https://travis-ci.org/saulshanabrook/django-dumper
 
@@ -40,11 +43,11 @@ with  ``dumper.middleware.FetchFromCacheMiddleware`` and
     )
 
 Note: dumper will not work with the `per view`_ cache. If you want this support
-then submit an issue, it should not be too hard to implement.
+add your voice to `the issue`_.
 
 .. _per site: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-site-cache
 .. _per view: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-view-cache
-
+.. _the issue: https://github.com/saulshanabrook/django-dumper/issues/3
 
 Usage
 -----
