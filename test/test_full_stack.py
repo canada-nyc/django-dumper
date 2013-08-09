@@ -37,6 +37,12 @@ class SimpleModelTest(BaseModelTest):
         with self.assertNumQueries(1):
             self.access_instance()
 
+    def test_cache_works_invalidated_after_save(self):
+        utils.clear_all_caches()
+        with self.assertNumQueries(1):
+            self.access_instance()
+        with self.assertNumQueries(0):
+            self.access_instance()
 
 class RelatedModelTest(BaseModelTest):
     model = models.RelatedModel
