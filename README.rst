@@ -17,6 +17,45 @@ a detail view will always return the same response, until the model changes.
 So this response for thie view can be cached until the model is changed.
 
 
+Why...?
+-------
+``django-dumper`` was created to scratch a rather specific itch. I was having
+trouble reducing load times on pages where there were lots of images. By
+default, if you want to render an image's url, width, and height, in a template then
+that hits the storage backend three times per image. With a remote backend,
+like S3, this creates long and unreliable page load times. If you are smarter
+and create `cached height and width fields`_, then you can reduce this to one
+hit. This is still not ideal for a page with 100+ images. So I thought, the only
+time these images ever change, is when a model saves. And then I started
+thinking, actually the only time any of my pages changed was when a model
+saved. Of course, I still wanted my page load times to be as low as possible
+before caching, but why would i re-render these pages on every request, if
+they would be identical for every visitor, until someone changed a model?
+
+So I set about to build an app that would allow me to do just that. It
+would cache the full content of each response indefinitely. It would then
+invalidate certain responses, based on their paths, whenever a model was saved.
+For instance, if the ``/ice-cream/`` page displays links to each flavor and
+``/ice-cream/<flavor-name>/`` has detailed information on a flavor, then
+every time a flavor is saved, it should not only invalidate its specific detail
+page, but also the general list page. This is definitely a brute force approach,
+but it makes sense to me because it is *safe*. You might over invalidate, but,
+if setup correctly, you will never have stale caches. 
+
+This is by no means an all purpose caching app. Every page rendered by your site
+must be determined only by models. Detail and list views are examples of pages
+determined by models. Also, my site does not differentiation between visitors,
+meaning that a certain path will always return the same response, no matter who
+is requesting it. However, I worked hard to maintain compatibility with multiple
+cached versions of each page, just like the Django site caches maintains. For
+instance, if you set a page to vary by language, than multiple versions of the
+page will be cached, one for each language that is requested. And when they are
+invalidated, all versions at a certain path will be invalidated. 
+
+.. _cached height and width fields: https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ImageField.height_field
+
+
+
 Installation
 ------------
 Installation is as easy as::
