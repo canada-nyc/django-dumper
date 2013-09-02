@@ -1,28 +1,28 @@
 from django.test import TestCase
-from django.test.utils import override_settings
 
-from dumper import invalidation
+import dumper.invalidation
+import dumper.utils
 
 
-class GetPathKeyTest(TestCase):
-    def test_two_paths_different(self):
-        paths = ['/path', '/other_path']
-        keys = map(invalidation.get_path_key, paths)
-        self.assertNotEqual(*keys)
+class InvalidatePathsTest(TestCase):
+    def setUp(self):
+        self.path = '/path'
+        self.cache_keys = dumper.invalidation.all_cache_keys_from_path(self.path)
 
-    def test_fragement_removed(self):
-        paths = ['/path', '/path#dsfs']
-        keys = map(invalidation.get_path_key, paths)
-        self.assertEqual(*keys)
+    def test_all_paths_invalidated(self):
+        for key in self.cache_keys:
+            dumper.utils.cache.set(key, True)
+        dumper.invalidation.invalidate_paths([self.path])
 
-    @override_settings(APPEND_SLASH=False)
-    def test_without_append_slash_different(self):
-        paths = ['/path', '/path/']
-        keys = map(invalidation.get_path_key, paths)
-        self.assertNotEqual(*keys)
+        key_values = map(dumper.utils.cache.get, self.cache_keys)
+        self.assertFalse(any(key_values))
 
-    @override_settings(APPEND_SLASH=True)
-    def test_with_append_slash_same(self):
-        paths = ['/path', '/path/']
-        keys = map(invalidation.get_path_key, paths)
-        self.assertEqual(*keys)
+
+class AllCacheKeysFromPathTest(TestCase):
+    def setUp(self):
+        self.path = '/path'
+
+    def test_get_key_returned(self):
+        keys = dumper.invalidation.all_cache_keys_from_path(self.path)
+        get_method_key = dumper.utils.cache_key(path=self.path, method='GET')
+        self.assertIn(get_method_key, keys)

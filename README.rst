@@ -26,13 +26,11 @@ Installation is as easy as::
 
 Setup
 -----
-Configure the `per site`_ cache.
+Configuration is similar to Django's `per site`_ cache.
 
-Then replace ``django.middleware.cache.FetchFromCacheMiddleware``
-and ``django.middleware.cache.UpdateCacheMiddleware``
-with  ``dumper.middleware.FetchFromCacheMiddleware`` and
-``dumper.middleware.UpdateCacheMiddleware``
-
+You’ll need to add ``'dumper.middleware.cache.UpdateCacheMiddleware'`` and
+``'dumper.middleware.cache.FetchFromCacheMiddleware'`` to your
+``MIDDLEWARE_CLASSES setting``, as in this example:
 
 .. code-block:: python
 
@@ -42,12 +40,18 @@ with  ``dumper.middleware.FetchFromCacheMiddleware`` and
         'dumper.middleware.FetchFromCacheMiddleware',
     )
 
-Note: dumper will not work with the `per view`_ cache. If you want this support
-add your voice to `the issue`_.
+Then, add the following optional settings to your Django settings file:
 
-.. _per site: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-site-cache
-.. _per view: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-view-cache
-.. _the issue: https://github.com/saulshanabrook/django-dumper/issues/3
+1. ``DUMPER_CACHE_ALIAS`` – The cache alias to use for storage. Defaults
+   ``'default'``
+2. ``DUMPER_KEY_PREFIX`` – If the cache is shared across multiple sites
+   using the same Django installation, set this to the name of the site,
+   or some other string that is unique to this Django instance, to
+   prevent key collisions. Defaults to ``'dumper.cached_path.'``.
+3. ``DUMPER_PATH_IGNORE_REGEX`` – If matched on the path, then
+   these pages will not be cached. By default it won't cached the admin
+   ``^/admin/``
+
 
 Usage
 -----
@@ -116,24 +120,13 @@ as well.
 
 Advice
 ------
-You can set ``CACHE_MIDDLEWARE_SECONDS`` to a very long time, because each
-of your URLs will be invalidated when the models change. However, currently
-Django does not let you differentiate between backend and frontend caching.
-For instance, if you set it to cache for a year, then the browser would also
-be instructed to cache that page for a year, so even when the backend cache
-is invalidated the cached browser version will remain outdated. I would
-reccomend using `django-response-timeout`_ to set the client side cache
-time to a shorter length.
-
-.. _django-response-timeout: http://github.com/saulshanabrook/django-response-timeout/
-
-I also would reccomend enabling `ETags`_. That way the whole response
+I would recommend enabling `ETags`_. That way the whole response
 won't have to be sent to the user, only the header, if the ETAG is the same.
 
 .. _ETags: https://docs.djangoproject.com/en/dev/ref/settings/#use-etags
 
-The Django documention does not cohesively describe how your middleware
-should be ordered, however `this stackoverflow`_ discussion does a fine job.
+The Django document ion does not cohesively describe how your middleware
+should be ordered, however `this stack overflow`_ discussion does a fine job.
 
 .. _this stackoverflow: http://stackoverflow.com/questions/4632323/practical-rules-for-django-middleware-ordering#question
 
@@ -161,33 +154,12 @@ this was worth it to maintain code simplicity.
 
 Path Cache Invalidation
 ^^^^^^^^^^^^^^^^^^^^^^^
-You would think that invalidating a cache of a certain path shouldn't be too
-hard, just look at how the middleware caches the response, get the same key
-and then delete the cache entry for it. However the cache middleware varies
-the cache based on a few different request headers, such as cookies attached
-and language provided. This makes sense if you want your page responses to vary
-at the same path. However it makes invalidation a pain. `Certain`_ `techniques`_
-`used`_ `to`_ invalidate these paths simply create a mock request with the path
-set to the path you want to invalidate, and gets the key using that request.
-I originally attempted to implement it this way, but I quickly found that
-it was difficult to test, because the test requests were different than the
-actuall browser requests and so presented difficult to find bugs in
-invalidation, where the cache might be invalidated for a path when accessing
-the path in the tests, but when accessing it on the browser it wasn't
-invalidated. Also it completely ignored different language caches, so if you
-varied your responses at all based on language or any other header, then it
-wouldn't invalidate your cache.
+The cache keys for paths have been greatly simplified to only care about
+two things when creating a key for a cached page. Those things are its
+path and its method. So one path can have two different cached versions,
+one for when it called with the ``HEAD`` method and one for the ``GET``
+method.
 
-.. _Certain: http://stackoverflow.com/questions/720800/removing-specific-items-from-djangos-cache
-.. _techniques: http://stackoverflow.com/questions/12574422/cant-delete-cache-for-specific-entry-in-django
-.. _used: http://stackoverflow.com/questions/2268417/expire-a-view-cache-in-django
-.. _to: http://stackoverflow.com/questions/3346124/how-do-i-force-django-to-ignore-any-caches-and-reload-data
-
-So instead I created a middleware that invalidates the cache key, based on
-if it's path has already been invalidated since the last invalidation.
-Read through `the source`_ for the details.
-
-.. _the source: https://github.com/saulshanabrook/django-dumper/blob/master/dumper/invalidation.py
 
 Contributing
 ------------

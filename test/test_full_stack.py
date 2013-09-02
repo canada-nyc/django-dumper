@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.test.client import Client
+from django.test.utils import override_settings
 
 from . import models, utils
 
@@ -43,6 +44,13 @@ class SimpleModelTest(BaseModelTest):
             self.access_instance()
         with self.assertNumQueries(0):
             self.access_instance()
+
+    @override_settings(DUMPER_PATH_IGNORE_REGEX=r'^/simple/')
+    def test_wont_cache_ignored(self):
+        self.access_instance()
+        with self.assertNumQueries(1):
+            self.access_instance()
+
 
 class RelatedModelTest(BaseModelTest):
     model = models.RelatedModel

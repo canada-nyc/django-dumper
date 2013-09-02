@@ -1,10 +1,15 @@
-from django.middleware import cache
-from django.utils.cache import _generate_cache_header_key, _generate_cache_key
+import re
 
-from .invalidation import get_path_key
+import logging
+
+import dumper.settings
+import dumper.utils
 
 
-class FetchFromCacheMiddleware(cache.FetchFromCacheMiddleware):
+logger = logging.getLogger(__name__)
+
+
+class FetchFromCacheMiddleware(object):
     """
     Request-phase middleware that checks to make sure this cache has been
     regenerated if it was invalidated.
@@ -12,107 +17,26 @@ class FetchFromCacheMiddleware(cache.FetchFromCacheMiddleware):
     Must be used in place of FetchFromCacheMiddleware.
     """
     def process_request(self, request):
-        # Each path can be invalidated by deleting this key. It is only
-        # based on the request path, meaning that if you delete this key
-        # than all requests to this path will be regenerated in the cache
-        path_key = get_path_key(request.path)
-        # the different requests that already have been regenerated
-        # are saved in a dictionary structure.
-        already_regenerated = self.cache.get(path_key, {})
-        # the keys in this dictionary are header keys. These keys are
-        # dependent upon two things besides the path. These are query
-        # strings and location headers set by the location middleware.
-        # so `/path?hi=ho` would have a different header key than
-        # `/path`.
-        header_key = _generate_cache_header_key(self.key_prefix, request)
-        # The cache middleware stores a list of headers that
-        # the request should vary on at this cache key
-        header_list = self.cache.get(header_key, None)
-        # If the cached value returned by this key is None, that means that
-        # the different pages at this header key have never been cached before.
-        if header_list is None:
-            # That means that all of the different pages at this header key
-            # need to be regenerated. So empty the list of pages that
-            # already have been regenerated at this path
-            already_regenerated[header_key] = []
-            self.cache.set(path_key, already_regenerated)
-            request._cache_update_cache = True
-            return
-        # since the header list has some headers in it, this means that
-        # this path has been cached before. the cache key varies based on the
-        # request headers specified in the header list and the request method
-        cache_key = _generate_cache_key(
-            request,
-            request.method,
-            header_list,
-            self.key_prefix
-        )
-        # get the list of cache keys that already have been invalidated for
-        # this cache header
-        already_regenerated_cache_keys = already_regenerated.setdefault(
-            header_key,  # key
-            []  # default
-        )
-        if cache_key not in already_regenerated_cache_keys:
-            # this cache key will be added to the list of already regenerated
-            # keys in the update cache middleware
-            request._cache_update_cache = True
-            return
-        # if the cache has already been regenerated
-        original_middleware = super(FetchFromCacheMiddleware, self)
-        return original_middleware.process_request(request)
+        key = dumper.utils.cache_key_from_request(request)
+        return dumper.utils.cache.get(key)
 
 
-class UpdateCacheMiddleware(cache.UpdateCacheMiddleware):
+class UpdateCacheMiddleware(object):
     """
     Response-phase cache middleware that updates the cache if the response is
     cacheable and adds the cache key to the regenerated caches.
 
     Must be used in place of UpdateCacheMiddleware.
-    If the cache was a dictionary, a simplified version would look like this
-    {
-        # django caching
-        'cache_header./path.language=english': ['User-Agent',]
-        'cache_key./path.language=english.User-Agent=roboto': Response(content='<html>')
-
-        # dumper caching
-        'dumper_path./path': {
-            'cache_header./path.language=english': ['cache_key./path.language=english.User-Agent=roboto']
-        }
-    }
-
-    This would mean that the request at the path `/path` with the `User-Agent`
-    `roboto` and the langauge `english` was already invalidated, and so can
-    be returned as a cached item.
     """
-    def process_response(self, request, response):
+    def should_cache(self, request, response):
+        return all([
+            request.method in dumper.settings.CACHABLE_METHODS,
+            response.status_code in dumper.settings.CACHABLE_RESPONSE_CODES,
+            not re.match(dumper.settings.PATH_IGNORE_REGEX(), request.path)
+        ])
 
-        original_middleware = super(UpdateCacheMiddleware, self)
-        original_response = original_middleware.process_response(
-            request,
-            response
-        )
-        # there are the checks that UpdateCacheMiddleware uses.
-        # if it wont cache the page, then no reason to add it to invalidated
-        if (
-            self._should_update_cache(request, response) and
-            not getattr(response, 'streaming', False) and  # getattr for 1.4 support
-            response.status_code == 200 and
-            cache.get_max_age(response)
-        ):
-            header_key = _generate_cache_header_key(self.key_prefix, request)
-            cache_key = _generate_cache_key(
-                request,
-                request.method,
-                self.cache.get(header_key, []),
-                self.key_prefix
-            )
-            path_key = get_path_key(request.path)
-            already_regenerated = self.cache.get(path_key, {})
-            already_regenerated_cache_keys = already_regenerated.setdefault(
-                header_key,  # key
-                []  # default
-            )
-            already_regenerated_cache_keys.append(cache_key)
-            self.cache.set(path_key, already_regenerated)
-        return original_response
+    def process_response(self, request, response):
+        if self.should_cache(request, response):
+            key = dumper.utils.cache_key_from_request(request)
+            dumper.utils.cache.set(key, response)
+        return response
