@@ -36,6 +36,3 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'dumper.middleware.FetchFromCacheMiddleware',
 )
-CACHE_MIDDLEWARE_ALIAS = 'default'
-CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24 * 365  # one year
-CACHE_MIDDLEWARE_KEY_PREFIX = ''
