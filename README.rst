@@ -230,3 +230,9 @@ To create a new release:
 2. Change version in ``setup.py``
 3. ``python setup.py register``
 4. ``python setup.py sdist upload``
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/saulshanabrook/django-dumper/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
