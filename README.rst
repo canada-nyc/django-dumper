@@ -10,9 +10,9 @@ django-dumper
 .. image:: https://travis-ci.org/saulshanabrook/django-dumper.png
     :target: https://travis-ci.org/saulshanabrook/django-dumper
 
-``django-dumper`` allows view caching invalidation based on model saves.
-It won't actually cache anything, but only invalidate the django cache.
-It is useful if your views are only dependent on model data. For instance,
+``django-dumper`` provides full site caching, similar to Django's,
+along with path based invalidation based on model saves.
+It is useful if your pages are only dependent on model data. For instance,
 a detail view will always return the same response, until the model changes.
 So this response for thie view can be cached until the model is changed.
 
