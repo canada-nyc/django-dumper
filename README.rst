@@ -12,9 +12,10 @@ django-dumper
 
 ``django-dumper`` provides full site caching, similar to Django's,
 along with path based invalidation based on model saves.
-It is useful if your pages are only dependent on model data. For instance,
-a detail view will always return the same response, until the model changes.
-So this response for thie view can be cached until the model is changed.
+It will cache every page that is not in ``DUMPER_PATH_IGNORE_REGEX``
+**forever**. So for it to be effective, all of your pages must
+be invalidated when neccesary, by specifying in your models
+which paths should be invalidated those models are saved.
 
 
 Why...?
