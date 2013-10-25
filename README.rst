@@ -169,32 +169,51 @@ should be ordered, however `this stack overflow`_ discussion does a fine job.
 
 Internals
 ---------
-So you wanna know how this all works huh? Well it might seem pretty simple.
-This library really has two parts. The first hooks into model saves and calls
-and invalidation function on all the paths returned by ``dependent_paths``.
-The second actually invalidates those paths.
 
-Model Registration
-^^^^^^^^^^^^^^^^^^
-When you register a model, it connects a function that retrieves the paths
-from the model and invalidates those paths to three signals. The first two
-are ``post_save`` and ``pre_delete``, which make sense. The third is
-``m2m_changed``. This signal is called actually by a ``through`` attribute of
-a ``ManyToManyField`` and is called whenever any member of that relationship is
-added added, deleted, or changed. It hooks this signal unto all the
-many to many fields on the registered model. It most likely calls the
+Cache Middleware |dumper/middleware.py|_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+My caching is based off of Django's `per site cache`_, but much simpler.
+Originally I just used their cache, but this greatly complicated my code
+and made it harder to understand. This is because their cache
+`creates different cached versions`_. for the same URL based on the ``Vary`` HTML header.
+It is much more complicated to implement path based invalidation, if other things
+besides the path are being use to generate the cache key. For instance, when I was
+supporting the Django middleware I had to figure out a way to delete every cached
+version of the path.
+
+If your pages do vary based on anything besides the path and HTTP method,
+then you should not cache them with ``django-dumper``. Either ignore them
+with the ``DUMPER_PATH_IGNORE_REGEX`` setting or don't use the project at all
+if all of your pages fall under this category.
+
+.. |dumper/middleware.py| replace:: ``dumper/middleware.py``
+.. _dumper/middleware.py: https://github.com/saulshanabrook/django-dumper/blob/master/dumper/middleware.py
+.. _per site cache: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-site-cache
+.. _creates different cached versions: https://github.com/django/django/blob/master/django/middleware/cache.py#L38-L39
+
+
+Invalidate Paths |dumper/invalidation.py|_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In order to invalidate a model when it saves, we get the path's that should
+be invalidated from the model, and then remove the cache keys that correspond
+to those paths. Each cache key is made up of a path plus a HTTP method.
+
+.. |dumper/invalidation.py| replace:: ``dumper/invalidation.py``
+.. _dumper/invalidation.py: https://github.com/saulshanabrook/django-dumper/blob/master/dumper/invalidation.py
+
+
+Invalidating on Model Saves: |dumper/site.py|_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+When you register a model a invalidation function to three signals.
+That function gets the paths from the model and then uses |dumper/invalidation.py|_
+to delete them. The three signals it registers with are ``post_save``, ``pre_delete``,
+and ``m2m_changed``. The last signal is called whenever any member that relationship
+is added, deleted, or changed. It most likely calls the
 invalidation function more than once if a many to many relationship is changed,
-but I figured there is minimal harm in over invalidating the paths, besides
-a slight performance hit from hitting the cache backend. However I figured
-this was worth it to maintain code simplicity.
+but is harmless, besides the slight performance hit from hitting the cache backend.
 
-Path Cache Invalidation
-^^^^^^^^^^^^^^^^^^^^^^^
-The cache keys for paths have been greatly simplified to only care about
-two things when creating a key for a cached page. Those things are its
-path and its method. So one path can have two different cached versions,
-one for when it called with the ``HEAD`` method and one for the ``GET``
-method.
+.. |dumper/site.py| replace:: ``dumper/site.py``
+.. _dumper/site.py: https://github.com/saulshanabrook/django-dumper/blob/master/dumper/site.py
 
 
 Contributing
