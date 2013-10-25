@@ -164,7 +164,7 @@ won't have to be sent to the user, only the header, if the ETAG is the same.
 The Django document ion does not cohesively describe how your middleware
 should be ordered, however `this stack overflow`_ discussion does a fine job.
 
-.. _this stackoverflow: http://stackoverflow.com/questions/4632323/practical-rules-for-django-middleware-ordering#question
+.. _this stack overflow: http://stackoverflow.com/questions/4632323/practical-rules-for-django-middleware-ordering#question
 
 
 Internals
