@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-dumper',
-    version='0.2.0',
+    version='0.2.1',
     author='Saul Shanabrook',
     author_email='s.shanabrook@gmail.com',
     packages=find_packages(),
