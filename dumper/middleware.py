@@ -1,12 +1,7 @@
 import re
 
-import logging
-
 import dumper.settings
 import dumper.utils
-
-
-logger = logging.getLogger(__name__)
 
 
 class FetchFromCacheMiddleware(object):
