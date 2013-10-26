@@ -4,3 +4,4 @@
 /MANIFEST
 /cover/
 *.egg-info
+/build/
