@@ -78,7 +78,7 @@ class SiteLogger(BaseLogger):
 
     @classmethod
     def invalidate_instance(cls, instance):
-        insance_name = unicode(instance)
+        insance_name = repr(instance)
         model = instance.__class__
         app_name = model._meta.app_label
         model_name = model._meta.object_name
