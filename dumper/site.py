@@ -2,7 +2,7 @@ from six import string_types
 
 from django.db.models import signals
 
-from .invalidation import invalidate_paths
+import dumper.invalidation
 
 
 def register(model):
@@ -26,7 +26,7 @@ def get_manytomany_through_from_model(model):
 
 def invalidate_instance_paths(instance):
     paths = get_paths_from_model(instance)
-    invalidate_paths(paths)
+    dumper.invalidation.invalidate_paths(paths)
 
 
 def get_paths_from_model(instance):
