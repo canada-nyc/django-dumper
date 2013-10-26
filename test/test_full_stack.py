@@ -51,6 +51,18 @@ class SimpleModelTest(BaseModelTest):
         with self.assertNumQueries(1):
             self.access_instance()
 
+    def test_wont_used_cached_version_if_path_ignored(self):
+        '''
+        Even if a path is ignored, we need to make sure that it not only will
+        not save a cache for that path, but also not use any left over cached
+        version of the path that were created before changing the setting.
+        '''
+        self.access_instance()
+
+        with self.settings(DUMPER_PATH_IGNORE_REGEX=r'^/simple/'):
+            with self.assertNumQueries(1):
+                self.access_instance()
+
 
 class RelatedModelTest(BaseModelTest):
     model = models.RelatedModel

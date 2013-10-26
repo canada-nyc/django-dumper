@@ -38,6 +38,13 @@ class MiddlewareLogger(BaseLogger):
         )
 
     @classmethod
+    def not_get(cls, request):
+        cls._cache_action(
+            'skipped getting',
+            path=request.path,
+        )
+
+    @classmethod
     def save(cls, key, request):
         cls._cache_action(
             'cached',

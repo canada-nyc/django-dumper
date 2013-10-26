@@ -12,11 +12,18 @@ class FetchFromCacheMiddleware(object):
 
     Must be used in place of FetchFromCacheMiddleware.
     """
+
+    def should_retrieve_cache(self, request):
+        return not re.match(dumper.settings.PATH_IGNORE_REGEX(), request.path)
+
     def process_request(self, request):
-        key = dumper.utils.cache_key_from_request(request)
-        value = dumper.utils.cache.get(key)
-        MiddlewareLogger.get(key, value, request)
-        return value
+        if self.should_retrieve_cache(request):
+            key = dumper.utils.cache_key_from_request(request)
+            value = dumper.utils.cache.get(key)
+            MiddlewareLogger.get(key, value, request)
+            return value
+        else:
+            MiddlewareLogger.not_get(request)
 
 
 class UpdateCacheMiddleware(object):
