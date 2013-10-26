@@ -10,7 +10,7 @@ script:
   - django-admin.py test --settings=test.settings
 env:
   matrix:
-    - DJANGO_VERSION="https://www.djangoproject.com/download/1.6a1/tarball/"
+    - DJANGO_VERSION="https://www.djangoproject.com/download/1.6c1/tarball/"
     - DJANGO_VERSION="django>=1.5,<1.6"
     - DJANGO_VERSION="django>=1.4,<1.5"
 matrix:
