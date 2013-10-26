@@ -155,6 +155,41 @@ as well.
     dumper.register(Size)
 
 
+Debugging
+---------
+The `dumper` package has `DEBUG` logging in place for the midleware
+and for the invalidation. To enable this, just make sure that
+any logs coming from `dumper` with the level `DEBUG` are shown.
+
+The simplest way to do this would be to this in your `settings.py`
+
+.. code-block:: python
+
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'name': {
+                'format': '%(name)s: %(message)s'
+            },
+        },
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'name'
+            },
+        },
+        'loggers': {
+            'dumper': {
+                'level': 'DEBUG',
+                'handlers': ['console', ]
+            }
+        }
+    }
+
+
+
 Advice
 ------
 I would recommend enabling `ETags`_. That way the whole response

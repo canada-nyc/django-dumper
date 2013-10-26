@@ -3,10 +3,14 @@ from six import string_types
 from django.db.models import signals
 
 import dumper.invalidation
+from dumper.logging_utils import SiteLogger
 
 
 def register(model):
+    SiteLogger.register(model)
+
     def invalidate_instance(sender, instance, **kwargs):
+        SiteLogger.invalidate_instance(instance)
         invalidate_instance_paths(instance)
 
     signals.post_save.connect(invalidate_instance, model, weak=False)

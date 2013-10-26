@@ -1,4 +1,5 @@
 import dumper.utils
+from dumper.logging_utils import InvalidationLogger
 
 
 def invalidate_paths(paths):
@@ -7,6 +8,7 @@ def invalidate_paths(paths):
     '''
     for path in paths:
         for key in all_cache_keys_from_path(path):
+            InvalidationLogger.invalidate(path, key)
             dumper.utils.cache.delete(key)
 
 

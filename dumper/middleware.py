@@ -2,6 +2,7 @@ import re
 
 import dumper.settings
 import dumper.utils
+from dumper.logging_utils import MiddlewareLogger
 
 
 class FetchFromCacheMiddleware(object):
@@ -13,7 +14,9 @@ class FetchFromCacheMiddleware(object):
     """
     def process_request(self, request):
         key = dumper.utils.cache_key_from_request(request)
-        return dumper.utils.cache.get(key)
+        value = dumper.utils.cache.get(key)
+        MiddlewareLogger.get(key, value, request)
+        return value
 
 
 class UpdateCacheMiddleware(object):
@@ -33,5 +36,8 @@ class UpdateCacheMiddleware(object):
     def process_response(self, request, response):
         if self.should_cache(request, response):
             key = dumper.utils.cache_key_from_request(request)
+            MiddlewareLogger.save(key, request)
             dumper.utils.cache.set(key, response)
+        else:
+            MiddlewareLogger.not_save(request)
         return response
