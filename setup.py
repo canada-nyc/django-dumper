@@ -3,20 +3,20 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-dumper',
-    version='0.2.2',
+    version='0.3.0-dev',
     author='Saul Shanabrook',
     author_email='s.shanabrook@gmail.com',
     packages=find_packages(),
     url='https://www.github.com/saulshanabrook/django-dumper',
     license='LICENSE.txt',
-    description='Django URL cache invalidation from model saves',
+    description='Django infinite caching with intelligent invalidation',
     long_description=open('README.rst').read(),
     install_requires=[
         "Django>=1.4,<1.7",
         "six",
     ],
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 1 - Planning",
         "Framework :: Django",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
