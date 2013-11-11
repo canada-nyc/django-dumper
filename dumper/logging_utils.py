@@ -85,12 +85,13 @@ class SiteLogger(BaseLogger):
 
     @classmethod
     def invalidate_instance(cls, instance):
-        insance_name = repr(instance)
+        instance_name = repr(instance)
+
         model = instance.__class__
         app_name = model._meta.app_label
         model_name = model._meta.object_name
         cls._log('invalidating instance "{0}" of {1}.{2}'.format(
-            insance_name,
+            instance_name,
             app_name,
             model_name
         ))
