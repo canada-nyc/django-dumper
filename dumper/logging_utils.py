@@ -90,7 +90,8 @@ class SiteLogger(BaseLogger):
         model = instance.__class__
         app_name = model._meta.app_label
         model_name = model._meta.object_name
-        cls._log('invalidating instance "{0}" of {1}.{2}'.format(
+        cls._log('invalidating instance #{0} "{1}" of {2}.{3}'.format(
+            instance.pk,
             instance_name,
             app_name,
             model_name
