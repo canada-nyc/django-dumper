@@ -56,7 +56,7 @@ class MiddlewareLogger(BaseLogger):
     @classmethod
     def not_save(cls, request):
         cls._cache_action(
-            'skipped caching',
+            'not saving cache for',
             path=request.path,
             method=request.method,
         )
