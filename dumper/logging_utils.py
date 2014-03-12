@@ -2,6 +2,7 @@ import logging
 
 
 class BaseLogger(object):
+
     @classmethod
     def get_logger(cls):
         logger = logging.getLogger(cls.module)
@@ -16,11 +17,11 @@ class BaseLogger(object):
     def _cache_action(cls, action, path=None, method=None, key=None):
         log_string = action
         if path:
-            log_string += ' path "{0}"'.format(path)
+            log_string += u' path "{0}"'.format(path)
         if method:
-            log_string += ' with method "{0}"'.format(method)
+            log_string += u' with method "{0}"'.format(method)
         if key:
-            log_string += ' as key "{0}"'.format(key)
+            log_string += u' as key "{0}"'.format(key)
         cls._log(log_string)
 
 
@@ -81,7 +82,7 @@ class SiteLogger(BaseLogger):
     def register(cls, model):
         app_name = model._meta.app_label
         model_name = model._meta.object_name
-        cls._log('registered {0}.{1}'.format(app_name, model_name))
+        cls._log(u'registered {0}.{1}'.format(app_name, model_name))
 
     @classmethod
     def invalidate_instance(cls, instance):
@@ -90,7 +91,7 @@ class SiteLogger(BaseLogger):
         model = instance.__class__
         app_name = model._meta.app_label
         model_name = model._meta.object_name
-        cls._log('invalidating instance #{0} "{1}" of {2}.{3}'.format(
+        cls._log(u'invalidating instance #{0} "{1}" of {2}.{3}'.format(
             instance.pk,
             instance_name,
             app_name,
