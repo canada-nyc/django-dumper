@@ -1,6 +1,6 @@
--- Modified logging wording slightly
-v0.2.3, 11/11/2014 -- Respect ignored paths even when already cached.
-v0.2.2, 12/10/2014 -- Improved internals description in README. Added debug logging.
+v0.2.4, 03/12/2014 -- Modified logging wording slightly, fixed unicode logging
+v0.2.3, 11/11/2013 -- Respect ignored paths even when already cached.
+v0.2.2, 12/10/2013 -- Improved internals description in README. Added debug logging.
 v0.2.0, 09/02/2013 -- Don't differentiate between page headers when caching.
 v0.1.1, 07/20/2013 -- Added safety check for invalidation middleware.
 v0.1.0, 07/09/2013 -- Initial release.
