@@ -1,7 +1,10 @@
+from __future__ import unicode_literals
+
 import logging
 
 
 class BaseLogger(object):
+
     @classmethod
     def get_logger(cls):
         logger = logging.getLogger(cls.module)
