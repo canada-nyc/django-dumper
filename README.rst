@@ -88,6 +88,14 @@ Then, add the following optional settings to your Django settings file:
    these pages will not be cached. By default it won't cached the admin
    ``^/admin/``
 
+.. hint:: If you use Django Grappelli, then you shouldn't be caching
+   any paths under `/grappelli/` and if you are serving media or static from
+   your app, you should ignore those as well.
+
+   .. code-block:: python
+
+        DUMPER_PATH_IGNORE_REGEX = r'^/(?:(?:admin)|(?:grappelli)|(?:media))/'
+
 .. _per site: https://docs.djangoproject.com/en/dev/topics/cache/#the-per-site-cache
 
 Usage
