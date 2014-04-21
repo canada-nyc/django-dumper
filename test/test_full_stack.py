@@ -20,6 +20,29 @@ class BaseModelTest(TestCase):
         utils.clear_all_caches()
 
 
+class NoModelTest(TestCase):
+    model = models.SimpleModel
+
+    def setUp(self):
+        self.c = Client()
+        self.slug = 'someslug'
+        self.url = '/simple/' + self.slug + '/'
+        self.access_instance = lambda: self.c.get(self.url)
+
+    def test_404_no_cache(self):
+        'access a 404 path twice and make sure it hits the database each time'
+        with self.assertNumQueries(1):
+            with self.assertRaises(self.model.DoesNotExist):
+                self.access_instance()
+
+        with self.assertNumQueries(1):
+            with self.assertRaises(self.model.DoesNotExist):
+                self.access_instance()
+
+    def tearDown(self):
+        utils.clear_all_caches()
+
+
 class SimpleModelTest(BaseModelTest):
     model = models.SimpleModel
 
