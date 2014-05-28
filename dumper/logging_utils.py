@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import logging
+import six
 
 
 class BaseLogger(object):
@@ -88,7 +89,7 @@ class SiteLogger(BaseLogger):
 
     @classmethod
     def invalidate_instance(cls, instance):
-        instance_name = unicode(instance)
+        instance_name = six.text_type(instance)
 
         model = instance.__class__
         app_name = model._meta.app_label
