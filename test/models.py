@@ -6,6 +6,12 @@ from django.contrib.contenttypes import generic
 import dumper
 
 
+class LoggingModel(models.Model):
+    text = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return self.text
+
 class SimpleModel(models.Model):
     slug = models.CharField(max_length=200, default='slug')
 
