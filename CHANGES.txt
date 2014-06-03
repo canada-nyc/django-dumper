@@ -1,3 +1,4 @@
+v0.2.5, 06/03/2014 -- Actually fixed unicode logging. Don't cache 404.
 v0.2.4, 03/12/2014 -- Modified logging wording slightly, fixed unicode logging
 v0.2.3, 11/11/2013 -- Respect ignored paths even when already cached.
 v0.2.2, 12/10/2013 -- Improved internals description in README. Added debug logging.
