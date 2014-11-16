@@ -1,0 +1,5 @@
+tests:
+  build: .
+  command: "django-admin.py test --settings=test.settings"
+  volumes:
+    - .:/usr/src/app

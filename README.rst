@@ -273,7 +273,19 @@ Create a new branch for your feature::
 
     git commit -b feature/whatever-you-like
 
-Then make sure all the tests past (and write new ones for any new features)::
+Then make sure all the tests past (and write new ones for any new features)
+
+With Fig and Docker::
+
+    fig up
+    # run fig build test if you change the required packages before testing again
+
+Normally::
+
+    pip install -e .
+    pip install -r requirements-dev.txt
+    django-admin.py test --settings=test.settings
+
 
     pip install -e .
     pip install -r requirements-dev.txt
