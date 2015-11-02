@@ -286,11 +286,6 @@ Normally::
     pip install -r requirements-dev.txt
     django-admin.py test --settings=test.settings
 
-
-    pip install -e .
-    pip install -r requirements-dev.txt
-    django-admin.py test --settings=test.settings
-
 Check if the README.rst looks right::
 
     restview --long-description
