@@ -275,10 +275,10 @@ Create a new branch for your feature::
 
 Then make sure all the tests past (and write new ones for any new features)
 
-With Fig and Docker::
+With Docker Compose and Docker::
 
-    fig up
-    # run fig build test if you change the required packages before testing again
+    docker-compose run tests
+    # run `docker-compose build` if you change the required packages before testing again
 
 Normally::
 
