@@ -4,7 +4,11 @@ try:
 except ImportError:
     from urlparse import urlsplit
 
-from django.core.cache import get_cache
+try:  # new import introduced in Django 1.7
+    from django.core.cache import caches
+    get_cache = lambda c: caches[c]
+except ImportError:
+    from django.core.cache import get_cache
 
 import dumper.settings
 
