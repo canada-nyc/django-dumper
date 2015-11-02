@@ -12,7 +12,7 @@ setup(
     description='Django URL cache invalidation from model saves',
     long_description=open('README.rst').read(),
     install_requires=[
-        "Django>=1.4,<1.8",
+        "Django>=1.4,<1.9",
         "six",
     ],
     classifiers=[
@@ -27,6 +27,8 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
         "Topic :: Software Development :: Libraries",
     ],
 )
