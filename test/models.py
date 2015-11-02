@@ -1,7 +1,13 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+try: # new import added in Django 1.7
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.contrib.contenttypes.fields import GenericRelation
+except ImportError:
+    from django.contrib.contenttypes import generic
+    GenericForeignKey = generic.GenericForeignKey
+    GenericRelation = generic.GenericRelation
 
 import dumper
 
@@ -40,7 +46,7 @@ class GenericRelationModel(models.Model):
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def dependent_paths(self):
         yield self.content_object.get_absolute_url()
@@ -48,7 +54,7 @@ class GenericRelationModel(models.Model):
 
 class RelatedToGenericModel(models.Model):
     slug = models.CharField(max_length=200, default='slug')
-    generic_related = generic.GenericRelation(GenericRelationModel)
+    generic_related = GenericRelation(GenericRelationModel)
 
     def get_absolute_url(self):
         return reverse('related-to-generic-detail', kwargs={'slug': self.slug})
@@ -59,7 +65,7 @@ class GenericRelationNotRegisteredModel(models.Model):
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def dependent_paths(self):
         pass
