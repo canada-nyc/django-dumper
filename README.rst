@@ -1,14 +1,7 @@
-django-dumper
+django-dumper 
 ============================
 
-.. image:: https://pypip.in/v/django-dumper/badge.png
-        :target: https://crate.io/packages/django-dumper
-
-.. image:: https://pypip.in/d/django-dumper/badge.png
-        :target: https://crate.io/packages/django-dumper
-
-.. image:: https://travis-ci.org/saulshanabrook/django-dumper.png
-    :target: https://travis-ci.org/saulshanabrook/django-dumper
+.. image:: https://img.shields.io/pypi/v/django-dumper.svg?style=flat-square   :target: https://pypi.python.org/pypi/django-dumper .. image:: https://img.shields.io/travis/saulshanabrook/django-dumper.svg?style=flat-square   :target: https://travis-ci.org/saulshanabrook/django-dumper/
 
 ``django-dumper`` provides full site caching, similar to Django's,
 along with path based invalidation based on model saves.
