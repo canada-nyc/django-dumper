@@ -29,6 +29,12 @@ class NoModelTest(TestCase):
         self.url = '/simple/' + self.slug + '/'
         self.access_instance = lambda: self.c.get(self.url)
 
+    def test_pre_404_no_cache(self):
+        'make sure that just getting an objec that doesn\'t exist only takes 1 db hit'
+        with self.assertNumQueries(1):
+            with self.assertRaises(self.model.DoesNotExist):
+                models.SimpleModel.objects.get(slug=self.slug)
+
     def test_404_no_cache(self):
         'access a 404 path twice and make sure it hits the database each time'
         with self.assertNumQueries(1):
