@@ -12,6 +12,7 @@ DATABASES = {
     },
 }
 ROOT_URLCONF = 'test.urls'
+TEMPLATES = []
 
 # Testing
 if django.VERSION[:2] < (1, 6):
