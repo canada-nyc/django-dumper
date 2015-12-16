@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
-try: # new import added in Django 1.7
+try:  # new import added in Django 1.7
     from django.contrib.contenttypes.fields import GenericForeignKey
     from django.contrib.contenttypes.fields import GenericRelation
 except ImportError:
@@ -17,6 +17,7 @@ class LoggingModel(models.Model):
 
     def __unicode__(self):
         return self.text
+
 
 class SimpleModel(models.Model):
     slug = models.CharField(max_length=200, default='slug')
