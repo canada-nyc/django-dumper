@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.test.client import Client
 from django.test.utils import override_settings
 
-from . import models, utils
+from . import models, utils, views
 
 
 class BaseModelTest(TestCase):
@@ -29,11 +29,23 @@ class NoModelTest(TestCase):
         self.url = '/simple/' + self.slug + '/'
         self.access_instance = lambda: self.c.get(self.url)
 
-    def test_pre_404_no_cache(self):
-        'make sure that just getting an objec that doesn\'t exist only takes 1 db hit'
+    def test_pre_pre_404_no_cache(self):
+        '''
+        make sure that just getting an object that doesn't exist only takes 1
+        db hit
+        '''
         with self.assertNumQueries(1):
             with self.assertRaises(self.model.DoesNotExist):
                 models.SimpleModel.objects.get(slug=self.slug)
+
+    def test_pre_404_no_cache(self):
+        '''
+        make sure that getting the view for an object that doesn't exist
+        only takes 1 db query
+        '''
+        with self.assertNumQueries(1):
+            with self.assertRaises(self.model.DoesNotExist):
+                views.simple_detail(slug=self.slug, request=None)
 
     def test_404_no_cache(self):
         'access a 404 path twice and make sure it hits the database each time'
