@@ -1,7 +1,9 @@
 django-dumper 
 ============================
 
-.. image:: https://img.shields.io/pypi/v/django-dumper.svg?style=flat-square   :target: https://pypi.python.org/pypi/django-dumper .. image:: https://img.shields.io/travis/saulshanabrook/django-dumper.svg?style=flat-square   :target: https://travis-ci.org/saulshanabrook/django-dumper/
+.. image:: https://img.shields.io/pypi/v/django-dumper.svg?style=flat-square   :target: https://pypi.python.org/pypi/django-dumper
+
+.. image:: https://img.shields.io/travis/saulshanabrook/django-dumper.svg?style=flat-square   :target: https://travis-ci.org/saulshanabrook/django-dumper/
 
 ``django-dumper`` provides full site caching, similar to Django's,
 along with path based invalidation based on model saves.
@@ -293,9 +295,4 @@ To create a new release:
 2. Change version in ``setup.py``
 3. ``python setup.py register``
 4. ``python setup.py sdist upload``
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/saulshanabrook/django-dumper/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
 
