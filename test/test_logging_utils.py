@@ -7,6 +7,7 @@ from dumper import logging_utils
 
 from .models import LoggingModel
 
+
 class BaseLoggerTest(TestCase):
 
     def setUp(self):
@@ -15,6 +16,7 @@ class BaseLoggerTest(TestCase):
 
     def test_unicode_path(self):
         self.logger._cache_action(action='', path='’')
+
 
 class SiteLoggerTest(TestCase):
     def setUp(self):

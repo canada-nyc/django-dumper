@@ -2,7 +2,6 @@ import django
 
 from os import path
 
-
 SECRET_KEY = 'not secret'
 INSTALLED_APPS = ('dumper', 'test', 'django.contrib.contenttypes')
 TEMPLATE_DEBUG = DEBUG = True
@@ -12,6 +11,7 @@ DATABASES = {
     },
 }
 ROOT_URLCONF = 'test.urls'
+TEMPLATES = []
 
 # Testing
 if django.VERSION[:2] < (1, 6):
@@ -35,3 +35,5 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'dumper.middleware.FetchFromCacheMiddleware',
 )
+
+LOGGING_CONFIG = None

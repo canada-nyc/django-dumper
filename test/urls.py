@@ -1,12 +1,13 @@
+import django
+
 try:
-    from django.conf.urls import patterns, url
+    from django.conf.urls import url
 except ImportError:
-    from django.conf.urls.defaults import patterns, url
+    from django.conf.urls.defaults import url
 
 from . import views
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(
         r'^simple/(?P<slug>[-\w]+)/$',
         views.simple_detail,
@@ -22,4 +23,11 @@ urlpatterns = patterns(
         views.related_to_generic_detail,
         name='related-to-generic-detail'
     )
-)
+]
+
+if django.VERSION < (1, 8, 0):
+    try:
+        from django.conf.urls import patterns
+    except ImportError:
+        from django.conf.urls.defaults import patterns
+    urlpatterns = patterns('', *urlpatterns)
